@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Results Portal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --secondary-color: #1e40af;
+      --bg-gradient: linear-gradient(135deg, #f0f4ff 0%, #dbeafe 100%);
+    }
+    body {
+      background: var(--bg-gradient);
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #334155;
+    }
+    .portal-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      width: 100%;
+      max-width: 480px;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      margin: 20px;
+    }
+    .card-header {
+      background: var(--primary-color);
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+      border: none;
+    }
+    .card-body { padding: 30px; }
+    .form-control {
+      border-radius: 12px;
+      padding: 15px;
+      border: 2px solid #e2e8f0;
+      font-size: 1.1rem;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+    .form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+    .btn-search {
+      background: var(--primary-color);
+      border: none;
+      border-radius: 12px;
+      padding: 15px;
+      font-weight: 600;
+      width: 100%;
+      margin-top: 20px;
+      transition: transform 0.2s ease;
+    }
+    .btn-search:hover {
+      background: var(--secondary-color);
+      transform: translateY(-2px);
+    }
+    .result-container {
+      display: none;
+      margin-top: 30px;
+      animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .student-identifier {
+        text-align: center;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 20px;
+        line-height: 1.4;
+    }
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .result-item:last-child { border-bottom: none; }
+    .result-value { font-weight: 600; color: #1e293b; }
+    .grade-badge-container { text-align: center; margin-bottom: 20px; }
+    .grade-circle {
+      width: 80px; height: 80px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 2rem; font-weight: 800; color: white;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .bg-A { background: linear-gradient(135deg, #10b981, #059669); }
+    .bg-B { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+    .bg-C { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .bg-D { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+    .bg-F { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .footer-credit {
+      text-align: center; margin-top: 20px; font-size: 0.8rem; color: #94a3b8;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .loader {
+      display: none; margin: 20px auto; width: 30px; height: 30px;
+      border: 3px solid #f3f3f3; border-top: 3px solid var(--primary-color);
+      border-radius: 50%; animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <div class="portal-card">
+    <div class="card-header">
+      <h2 class="m-0">Student Results</h2>
+    </div>
+
+    <div class="card-body">
+      <div class="mb-2">
+        <label class="form-label text-muted small fw-bold text-uppercase ps-1">Seat Number</label>
+        <input type="text" id="seatInput" class="form-control" placeholder="Enter seat number (e.g. 24-1-58)">
+      </div>
+      
+      <button class="btn btn-primary btn-search" onclick="searchResult()">
+        Search Result
+      </button>
+
+      <div id="loader" class="loader"></div>
+
+      <div id="errorMsg" class="alert alert-danger mt-4 text-center border-0 shadow-sm" style="display:none; background: #fee2e2; color: #991b1b;">
+        <i class="fas fa-exclamation-circle me-2"></i> Seat number not found.
+      </div>
+
+      <div id="resultArea" class="result-container">
+        <div class="grade-badge-container">
+          <div id="gradeCircle" class="grade-circle bg-A">-</div>
+          <div class="mt-2 text-muted fw-bold" id="resEval">-</div>
+        </div>
+
+        <div class="student-identifier" id="resIdentifier">Seat No: -</div>
+
+        <div class="result-item">
+          <span class="result-label"><i class="fas fa-trophy text-warning me-2"></i> Class Rank</span>
+          <span class="result-value" id="resRank">#</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label"><i class="fas fa-chart-line text-info me-2"></i> Total Score</span>
+          <span class="result-value" id="resTotal">0</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label"><i class="fas fa-percent text-success me-2"></i> Percentage</span>
+          <span class="result-value" id="resPercent">0%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-credit">Results Portal</div>
+
+  <script>
+    // ---------------------------------------------------------
+    // PASTE YOUR GOOGLE DEPLOYMENT URL HERE INSIDE THE QUOTES:
+    const API_URL = "Paste_Your_Google_Script_URL_Here"; 
+    // ---------------------------------------------------------
+
+    function searchResult() {
+      const seatRaw = document.getElementById('seatInput').value;
+      const seat = seatRaw ? seatRaw.trim() : "";
+      const btn = document.querySelector('.btn-search');
+
+      if (!seat) {
+        document.getElementById('seatInput').focus();
+        return;
+      }
+
+      document.getElementById('loader').style.display = 'block';
+      document.getElementById('resultArea').style.display = 'none';
+      document.getElementById('errorMsg').style.display = 'none';
+      btn.disabled = true;
+      btn.innerHTML = 'Searching...';
+
+      fetch(API_URL + "?seat=" + encodeURIComponent(seat))
+        .then(response => response.json())
+        .then(data => {
+          btn.disabled = false;
+          btn.innerHTML = 'Search Result';
+          document.getElementById('loader').style.display = 'none';
+
+          if (data.found) {
+            document.getElementById('resIdentifier').innerText = "Seat No: " + data.seat; 
+            document.getElementById('resRank').innerText = "#" + data.rank;
+            document.getElementById('resTotal').innerText = data.total;
+            document.getElementById('resPercent').innerText = data.percent;
+            document.getElementById('resEval').innerText = data.evaluation; 
+
+            const grade = data.grade ? data.grade.toString() : "-";
+            const firstChar = grade.charAt(0).toUpperCase();
+            let gradeClass = 'bg-F'; 
+
+            if (firstChar === "A") gradeClass = "bg-A";
+            else if (firstChar === "B") gradeClass = "bg-B";
+            else if (firstChar === "C") gradeClass = "bg-C";
+            else if (firstChar === "D") gradeClass = "bg-D";
+
+            const circle = document.getElementById('gradeCircle');
+            circle.innerText = grade;
+            circle.className = 'grade-circle ' + gradeClass;
+
+            document.getElementById('resultArea').style.display = 'block';
+          } else {
+            document.getElementById('errorMsg').style.display = 'block';
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          btn.disabled = false;
+          btn.innerHTML = 'Search Result';
+          document.getElementById('loader').style.display = 'none';
+          alert("Error connecting. Verify your Google Script URL.");
+        });
+    }
+
+    document.getElementById("seatInput").addEventListener("keypress", function(event) {
+      if (event.key === "Enter") searchResult();
+    });
+  </script>
+
+</body>
+</html>
