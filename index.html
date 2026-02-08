@@ -11,8 +11,8 @@
 
   <style>
     :root {
-      --primary-color: #0d6efd; /* Medical Blue */
-      --accent-color: #0dcaf0;  /* Cyan accent */
+      --primary-color: #0d6efd;
+      --accent-color: #0dcaf0;
       --glass-bg: rgba(255, 255, 255, 0.85);
       --glass-border: rgba(255, 255, 255, 0.4);
       --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
@@ -27,19 +27,13 @@
       justify-content: center;
       color: #333;
       margin: 0;
-      position: relative;
-      overflow-x: hidden;
-      
-      /* --- BACKGROUND IMAGE SETTINGS --- */
-      /* Replace the URL below with your specific photo URL or file path */
+      /* Background Image */
       background-image: url('background.jpg'); 
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
-      background-repeat: no-repeat;
     }
 
-    /* Dark Overlay to ensure text is readable over any photo */
     body::before {
       content: '';
       position: absolute;
@@ -48,304 +42,170 @@
       z-index: -1;
     }
 
-    /* Main Card Styling (Glassmorphism) */
     .portal-card {
       background: var(--glass-bg);
       backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--glass-border);
       width: 90%;
       max-width: 450px;
       border-radius: 24px;
       box-shadow: var(--shadow);
+      position: relative;
       overflow: hidden;
       animation: fadeInDown 0.8s ease-out;
-      position: relative;
     }
 
-    /* Decorative Circle Graphic */
-    .portal-card::after {
-      content: '';
-      position: absolute;
-      top: -50px;
-      right: -50px;
-      width: 150px;
-      height: 150px;
-      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-      border-radius: 50%;
-      opacity: 0.1;
-      z-index: 0;
-    }
-
-    .card-header {
-      background: transparent;
-      padding: 40px 30px 10px;
-      text-align: center;
-      border: none;
-      position: relative;
-      z-index: 1;
-    }
-
-    .card-header h2 {
-      font-weight: 700;
-      color: #1e293b;
-      margin-top: 10px;
-      font-size: 1.8rem;
-    }
-    
+    .card-header { text-align: center; padding: 40px 30px 10px; }
+    .card-header h2 { font-weight: 700; color: #1e293b; margin-top: 10px; }
     .icon-header {
       font-size: 3rem;
       background: -webkit-linear-gradient(45deg, var(--primary-color), var(--accent-color));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 10px;
     }
 
-    .card-body {
-      padding: 30px;
-      position: relative;
-      z-index: 1;
-    }
+    .card-body { padding: 30px; }
 
-    /* Inputs & Buttons */
-    .form-floating > .form-control {
-      border-radius: 15px;
+    .form-control {
+      border-radius: 15px; height: 60px; font-size: 1.1rem; text-align: center;
       border: 2px solid #e2e8f0;
-      height: 60px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      letter-spacing: 1px;
-      text-align: center;
     }
-    
-    .form-floating > .form-control:focus {
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
-    }
+    .form-control:focus { border-color: var(--primary-color); box-shadow: none; }
 
     .btn-search {
       background: linear-gradient(90deg, var(--primary-color), #0056b3);
-      border: none;
-      border-radius: 15px;
-      padding: 16px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      width: 100%;
-      margin-top: 25px;
-      color: white;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+      border: none; border-radius: 15px; padding: 16px;
+      font-weight: 600; width: 100%; margin-top: 25px; color: white;
+      transition: 0.3s;
     }
+    .btn-search:hover { transform: translateY(-2px); }
 
-    .btn-search:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(13, 110, 253, 0.4);
-    }
-    
-    .btn-search:disabled {
-      background: #bdc3c7;
-      transform: none;
-    }
-
-    /* Results Section */
     .result-container {
-      display: none;
-      margin-top: 30px;
-      padding-top: 20px;
+      display: none; margin-top: 30px; padding-top: 20px;
       border-top: 2px dashed rgba(0,0,0,0.1);
       animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .student-identifier {
-        text-align: center;
-        background: rgba(255,255,255,0.6);
-        padding: 10px;
-        border-radius: 10px;
-        margin-bottom: 25px;
-        font-weight: 600;
-        color: #475569;
-        font-size: 0.95rem;
+      text-align: center; background: rgba(255,255,255,0.6); padding: 15px;
+      border-radius: 10px; margin-bottom: 25px; font-weight: 600; color: #475569;
+      border-left: 4px solid var(--primary-color);
     }
+    .student-name { display: block; color: #1e293b; font-size: 1.2rem; margin-bottom: 5px; }
 
     .result-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px;
-      margin-bottom: 10px;
-      background: rgba(255,255,255,0.5);
-      border-radius: 12px;
-      transition: transform 0.2s;
+      display: flex; justify-content: space-between; padding: 15px; margin-bottom: 10px;
+      background: rgba(255,255,255,0.5); border-radius: 12px;
     }
-    
-    .result-item:hover {
-      transform: scale(1.02);
-      background: rgba(255,255,255,0.8);
-    }
+    .result-label { color: #64748b; font-weight: 500; }
+    .result-value { font-weight: 700; color: #1e293b; }
 
-    .result-label { color: #64748b; font-size: 0.9rem; font-weight: 500; }
-    .result-value { font-weight: 700; color: #1e293b; font-size: 1.1rem; }
-
-    /* Grade Badge */
-    .grade-badge-container {
-      text-align: center;
-      margin-bottom: 15px;
-      position: relative;
-    }
-    
+    /* Grade Circle */
+    .grade-badge-container { text-align: center; margin-bottom: 15px; }
     .grade-circle {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 3rem;
-      font-weight: 800;
-      color: white;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-      border: 4px solid white;
+      width: 100px; height: 100px; border-radius: 50%; display: inline-flex;
+      align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 800;
+      color: white; border: 4px solid white; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     }
-    
-    .eval-text {
-      margin-top: 10px;
-      font-weight: 700;
-      font-size: 1.2rem;
-      color: #333;
-    }
+    .eval-text { margin-top: 10px; font-weight: 700; font-size: 1.2rem; }
 
-    /* Grade Colors */
-    .bg-A { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3); }
-    .bg-B { background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3); }
-    .bg-C { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3); }
-    .bg-D { background: linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3); }
-    .bg-F { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); }
+    /* Colors */
+    .bg-Excellent { background: linear-gradient(135deg, #10b981, #059669); }
+    .bg-Very { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+    .bg-Good { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .bg-F { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .bg-Default { background: linear-gradient(135deg, #6c757d, #495057); }
 
-    .footer-credit {
-      text-align: center;
-      margin-top: 25px;
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.8);
-      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-
-    /* Animations */
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
     .loader {
-      display: none;
-      margin: 20px auto;
-      width: 40px;
-      height: 40px;
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid var(--primary-color);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
+      display: none; margin: 20px auto; width: 40px; height: 40px;
+      border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color);
+      border-radius: 50%; animation: spin 1s linear infinite;
     }
+    
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-    /* Mobile adjustments */
-    @media (max-width: 576px) {
-      .portal-card { width: 95%; margin: 10px; }
-      .card-header h2 { font-size: 1.5rem; }
-    }
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25%, 75% { transform: translateX(-5px); } 50% { transform: translateX(5px); } }
   </style>
 </head>
 <body>
 
   <div class="portal-card">
     <div class="card-header">
-      <div class="icon-header">
-        <i class="fas fa-university"></i>
-      </div>
+      <div class="icon-header"><i class="fas fa-university"></i></div>
       <h2>Student Results</h2>
-      <p class="text-muted small">Faculty of Medicine</p>
+      <p class="text-muted small">Faculty of Medicine - AFM</p>
     </div>
 
     <div class="card-body">
-      
       <div class="form-floating mb-3">
         <input type="text" class="form-control" id="seatInput" placeholder="Seat Number">
-        <label for="seatInput" class="text-muted"><i class="fas fa-id-card me-2"></i>Enter Seat Number</label>
+        <label for="seatInput" class="text-muted">Enter Seat Number</label>
       </div>
       
-      <button class="btn btn-primary btn-search" onclick="searchResult()">
+      <button class="btn btn-search" onclick="searchResult()">
         <i class="fas fa-search me-2"></i> Get Result
       </button>
 
       <div id="loader" class="loader"></div>
-
-      <div id="errorMsg" class="alert alert-danger mt-4 text-center border-0 shadow-sm" style="display:none; background: #fee2e2; color: #991b1b; border-radius: 12px;">
+      <div id="errorMsg" class="alert alert-danger mt-4 text-center" style="display:none; border-radius: 12px;">
         <i class="fas fa-exclamation-triangle me-2"></i> Seat number not found.
       </div>
 
       <div id="resultArea" class="result-container">
-        
         <div class="grade-badge-container">
-          <div id="gradeCircle" class="grade-circle bg-A">-</div>
+          <div id="gradeCircle" class="grade-circle bg-Default">-</div>
           <div class="eval-text" id="resEval">-</div>
         </div>
 
         <div class="student-identifier">
-          <i class="fas fa-user-graduate me-2"></i> <span id="resIdentifier">Seat No: -</span>
+          <span id="resName" class="student-name">Name</span>
+          <i class="fas fa-fingerprint me-2"></i> <span id="resSeat">Seat: -</span>
         </div>
 
         <div class="result-item">
-          <span class="result-label"><i class="fas fa-trophy text-warning me-2"></i> Class Rank</span>
+          <span class="result-label">Class Rank</span>
           <span class="result-value" id="resRank">#</span>
         </div>
-
         <div class="result-item">
-          <span class="result-label"><i class="fas fa-poll text-info me-2"></i> Total Score</span>
+          <span class="result-label">Total Score</span>
           <span class="result-value" id="resTotal">0</span>
         </div>
-
         <div class="result-item">
-          <span class="result-label"><i class="fas fa-chart-pie text-success me-2"></i> Percentage</span>
+          <span class="result-label">Percentage</span>
           <span class="result-value" id="resPercent">0%</span>
         </div>
-
       </div>
     </div>
   </div>
 
-  <div class="footer-credit">
-    &copy; 2026 Class Ranks Results Portal
-  </div>
+  <div style="margin-top:20px; color:white; font-size:0.8rem;">&copy; 2026 OAFM Results Portal</div>
 
   <script>
-    // YOUR EXISTING API URL IS PRESERVED HERE
-    const API_URL = "https://script.google.com/macros/s/AKfycbzr6bhfjRaxd1bZIQA_gtOGQNw7OyDYOQhORKCAzQPIU-6fyxMSfftpTGhbzxNAB4HH/exec"; 
+    // ============================================
+    // ⚠️ PASTE YOUR GOOGLE DEPLOYMENT URL HERE ⚠️
+    // ============================================
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMO5CdWs21Yh0R0RePPLUFS-MtDT90MXQ0b0TF7K8/dev"; 
 
     function searchResult() {
       const seatRaw = document.getElementById('seatInput').value;
       const seat = seatRaw ? seatRaw.trim() : "";
       const btn = document.querySelector('.btn-search');
-      const input = document.getElementById('seatInput');
-
+      
       if (!seat) {
-        input.focus();
-        input.classList.add('is-invalid'); // Visual feedback
-        setTimeout(() => input.classList.remove('is-invalid'), 2000);
+        document.getElementById('seatInput').focus();
         return;
       }
 
-      // Reset UI
+      // UI Reset
       document.getElementById('loader').style.display = 'block';
       document.getElementById('resultArea').style.display = 'none';
       document.getElementById('errorMsg').style.display = 'none';
-      
       btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Searching...';
+      btn.innerHTML = 'Searching...';
 
-      fetch(API_URL + "?seat=" + encodeURIComponent(seat))
+      // FETCH REQUEST
+      fetch(SCRIPT_URL + "?seat=" + encodeURIComponent(seat))
         .then(response => response.json())
         .then(data => {
           btn.disabled = false;
@@ -353,68 +213,53 @@
           document.getElementById('loader').style.display = 'none';
 
           if (data.found) {
-            // Populate Data
-            document.getElementById('resIdentifier').innerText = "Seat No: " + data.seat; 
+            // Update Text
+            document.getElementById('resName').innerText = data.name;
+            document.getElementById('resSeat').innerText = "Seat: " + data.seat;
             document.getElementById('resRank').innerText = "#" + data.rank;
             document.getElementById('resTotal').innerText = data.total;
             document.getElementById('resPercent').innerText = data.percent;
-            document.getElementById('resEval').innerText = data.evaluation; 
+            document.getElementById('resEval').innerText = data.evaluation;
 
-            // Visual Grade Logic
-            const grade = data.grade ? data.grade.toString() : "-";
-            const firstChar = grade.charAt(0).toUpperCase();
-            let gradeClass = 'bg-F'; 
+            // Visual Logic
+            const evalText = data.evaluation || "";
+            let gradeClass = 'bg-Default';
+            let circleText = evalText.charAt(0);
 
-            if (firstChar === "A") gradeClass = "bg-A";
-            else if (firstChar === "B") gradeClass = "bg-B";
-            else if (firstChar === "C") gradeClass = "bg-C";
-            else if (firstChar === "D") gradeClass = "bg-D";
+            if (evalText.includes("Excellent") || evalText.includes("امتياز")) {
+                gradeClass = "bg-Excellent"; circleText = "Ex";
+            } else if (evalText.includes("Very Good") || evalText.includes("جيد جدا")) {
+                gradeClass = "bg-Very"; circleText = "Vg";
+            } else if (evalText.includes("Good") || evalText.includes("جيد")) {
+                gradeClass = "bg-Good"; circleText = "Gd";
+            } else if (evalText.includes("F") || evalText.includes("Fail")) {
+                gradeClass = "bg-F"; circleText = "F";
+            }
 
             const circle = document.getElementById('gradeCircle');
-            circle.innerText = grade;
+            circle.innerText = circleText;
             circle.className = 'grade-circle ' + gradeClass;
 
             document.getElementById('resultArea').style.display = 'block';
           } else {
             document.getElementById('errorMsg').style.display = 'block';
-            // Shake animation for error
-            const card = document.querySelector('.portal-card');
-            card.style.animation = 'none';
-            card.offsetHeight; /* trigger reflow */
-            card.style.animation = 'shake 0.5s';
+            document.querySelector('.portal-card').style.animation = 'shake 0.5s';
           }
         })
         .catch(error => {
           console.error('Error:', error);
           btn.disabled = false;
-          btn.innerHTML = 'Search Result';
+          btn.innerHTML = 'Get Result';
           document.getElementById('loader').style.display = 'none';
-          alert("Connection error. Please try again.");
+          alert("Connection failed. Check the Script URL.");
         });
     }
 
-    // Enter Key Support
-    document.getElementById("seatInput").addEventListener("keypress", function(event) {
-      if (event.key === "Enter") searchResult();
+    // Trigger on Enter key
+    document.getElementById("seatInput").addEventListener("keypress", function(e) {
+      if (e.key === "Enter") searchResult();
     });
-    
-    // Add shake keyframes dynamically
-    const styleSheet = document.createElement("style");
-    styleSheet.innerText = `
-      @keyframes shake {
-        0% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        50% { transform: translateX(5px); }
-        75% { transform: translateX(-5px); }
-        100% { transform: translateX(0); }
-      }
-    `;
-    document.head.appendChild(styleSheet);
   </script>
 
 </body>
 </html>
-
-
-
-
